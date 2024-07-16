@@ -12,7 +12,7 @@ class TextNode:
         )
     
     def __repr__(self) -> str:
-        print(f"TextNode({self.text}, {self.text_type}, {self.url})")
+        return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
 
 def main():
