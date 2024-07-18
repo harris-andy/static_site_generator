@@ -3,19 +3,21 @@ class HTMLNode:
         self.tag = tag
         self.value = value
         self.children = children
-        self.props = props if props is not None else {}
+        self.props = props
 
     def to_html(self):
         raise NotImplementedError
     
     def props_to_html(self):
+        if self.props is None:
+            return ""
         result = ""
         for key, value in self.props.items():
             result += f' {key}="{value}"'
         return result
     
     def __repr__(self) -> str:
-        return f"HTML Node Object: tag: {self.tag}, value: {self.value}, children: {self.children}, props: {self.props}"
+        return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
     
 
 class LeafNode(HTMLNode):
@@ -50,3 +52,6 @@ class ParentNode(HTMLNode):
         
         children_html = recursive_children(self.children)
         return f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
+    
+
+# def text_node_to_html_node(text_node):
