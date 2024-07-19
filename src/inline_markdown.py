@@ -12,30 +12,37 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []    
     for node in old_nodes:
         if node.text_type != "text":
-            new_nodes.append(node)
-        
+            new_nodes.append(node)      
         else:
             chunks = node.text.split(delimiter)
-
             if len(chunks) % 2 == 0:    
                 raise Exception("Invalid markdown syntax - missing opening or closing delimiter.")
 
             for i in range(len(chunks)):
                 if chunks[i] == '':
                     continue
-
                 if i % 2 == 0:
                     new_nodes.append(TextNode(chunks[i], text_type_text))
                 else:
                     new_nodes.append(TextNode(chunks[i], text_type))
-
     return new_nodes
 
 
+# First regex functions:
+def extract_markdown_images(text):
+    matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
+    # print(matches)
+    return matches
+
+def extract_markdown_links(text):
+    matches = re.findall("\[(.*?)\]\((.*?)\)", text)
+    # print(matches)
+    return matches
+
 
 #########################
-# BOOT.DEV SOLUTION
-########################
+# BOOT.DEV SOLUTION for split nodes function
+# ########################
 
 # def split_nodes_delimiter(old_nodes, delimiter, text_type):
 #     new_nodes = []
