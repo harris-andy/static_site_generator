@@ -28,16 +28,93 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     return new_nodes
 
 
-# First regex functions:
+
+# First regex functions (ch 3.4)
 def extract_markdown_images(text):
     matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
     # print(matches)
     return matches
 
 def extract_markdown_links(text):
-    matches = re.findall("\[(.*?)\]\((.*?)\)", text)
+    matches = re.findall(r"\[(.*?)\]\((.*?)\)", text)
     # print(matches)
     return matches
+
+
+# Split images & links (ch 3.5)
+def split_nodes_image(old_nodes):
+    ...
+
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != text_type_text:
+            new_nodes.append(node)
+            continue
+
+        matches = extract_markdown_links(node.text)
+        search_string = node.text
+
+        for match in matches:
+            match_string = f"[{match[0]}]({match[1]})"
+            split_text = search_string.split(match_string)
+            
+            if split_text[0] != "":
+                # Adds text node
+                new_nodes.append(TextNode(split_text[0], text_type_text))
+            # adds link node
+            new_nodes.append(TextNode(match[0], text_type_link, match[1]))
+            search_string = split_text[1]
+        # adds last text string if it exists
+        if search_string:
+            new_nodes.append(TextNode(search_string, text_type_text))            
+
+        print(f'New Nodes: {new_nodes}')
+    return new_nodes
+
+
+
+
+# matches = [('to boot dev', 'https://www.boot.dev'), ('to youtube', 'https://www.youtube.com/@bootdotdev')]
+
+# matches_wo_capture_groups = ['[to boot dev](https://www.boot.dev)', '[to youtube](https://www.youtube.com/@bootdotdev)']
+
+
+node = TextNode(
+    "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+    text_type_text,
+)
+
+node2 = TextNode(
+            "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev) with text that follows",
+            text_type_text,
+        )
+[
+    TextNode("This is text with a ", text_type_text),
+    TextNode("link", text_type_link, "https://boot.dev"),
+    TextNode(" and ", text_type_text),
+    TextNode("another link", text_type_link, "https://blog.boot.dev"),
+    TextNode(" with text that follows", text_type_text),
+]
+
+
+new_nodes = split_nodes_link([node2])
+# print(new_nodes)
+# [
+#     TextNode("This is text with a link ", text_type_text),
+#     TextNode("to boot dev", text_type_link, "https://www.boot.dev"),
+#     TextNode(" and ", text_type_text),
+#     TextNode(
+#         "to youtube", text_type_link, "https://www.youtube.com/@bootdotdev"
+#     ),
+# ]
+
+
+
+
+
+
 
 
 #########################
@@ -72,10 +149,10 @@ def extract_markdown_links(text):
 # NEW NODES: [TextNode(bold, bold, None), TextNode( and , text, None), TextNode(italic, italic, None)]
 # NEW NODES: [TextNode(, text, None), TextNode(bold, bold, None), TextNode( and , text, None), TextNode(italic, italic, None), TextNode(, text, None)]
 
-node = TextNode("This is text with a `code block` word", text_type_text)
-node2 = TextNode("This is text with a **bold**", text_type_text)
-node3 = TextNode("This is text with an *italic* word", text_type_text)
-node4 = TextNode("This is text with a `code block` word", text_type_text)
+# node = TextNode("This is text with a `code block` word", text_type_text)
+# node2 = TextNode("This is text with a **bold**", text_type_text)
+# node3 = TextNode("This is text with an *italic* word", text_type_text)
+# node4 = TextNode("This is text with a `code block` word", text_type_text)
 # code_nodes = split_nodes_delimiter([node], "`", text_type_code)
 # bold_nodes = split_nodes_delimiter([node2], "**", text_type_bold)
 

@@ -2,7 +2,7 @@ import unittest
 
 from textnode import TextNode
 import re
-from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
+from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link
 
 text_type_text = "text"
 text_type_bold = "bold"
@@ -164,6 +164,28 @@ class TestSplitNode(unittest.TestCase):
             ],
             matches,
         )
+
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev) with text that follows",
+            text_type_text,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a ", text_type_text),
+                TextNode("link", text_type_link, "https://boot.dev"),
+                TextNode(" and ", text_type_text),
+                TextNode("another link", text_type_link, "https://blog.boot.dev"),
+                TextNode(" with text that follows", text_type_text),
+            ],
+            new_nodes,
+        )
+
+
+# if __name__ == "__main__":
+#     unittest.main()
+
 
 
 
