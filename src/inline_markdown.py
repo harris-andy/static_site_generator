@@ -3,8 +3,11 @@ import re
 
 text_type_text = "text"
 text_type_bold = "bold"
+# bold_delimiter = "**"
 text_type_italic = "italic"
+# italic_delimiter = "*"
 text_type_code = "code"
+# code_delimiter = "`"
 text_type_link = "link"
 text_type_image = "image"
 
@@ -51,7 +54,7 @@ def split_nodes_image(old_nodes):
             continue
 
         matches = extract_markdown_images(node.text)
-        print(matches)
+        # print(matches)
         search_string = node.text
 
         for match in matches:
@@ -68,7 +71,7 @@ def split_nodes_image(old_nodes):
         if search_string:
             new_nodes.append(TextNode(search_string, text_type_text))            
 
-        print(f'New Nodes: {new_nodes}')
+        # print(f'New Nodes: {new_nodes}')
     return new_nodes
 
 
@@ -96,10 +99,26 @@ def split_nodes_link(old_nodes):
         if search_string:
             new_nodes.append(TextNode(search_string, text_type_text))            
 
-        print(f'New Nodes: {new_nodes}')
+        # print(f'New Nodes: {new_nodes}')
     return new_nodes
 
 
+def text_to_textnodes(text):
+    nodes = [TextNode(text, text_type_text)]
+    nodes = split_nodes_delimiter(nodes, "**", text_type_bold)
+    nodes = split_nodes_delimiter(nodes, "*", text_type_italic)
+    nodes = split_nodes_delimiter(nodes, "`", text_type_code)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+
+    # print(nodes)
+    return nodes
+
+
+
+test_text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+
+text_to_textnodes(test_text)
 
 
 # matches = [('to boot dev', 'https://www.boot.dev'), ('to youtube', 'https://www.youtube.com/@bootdotdev')]
